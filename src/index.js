@@ -1,7 +1,7 @@
 import "./index.css";
 import React from "react";
 import { render } from "react-dom";
-import { types, getSnapshot } from "mobx-state-tree";
+import { types, getSnapshot, applySnapshot } from "mobx-state-tree";
 
 const Todo = types
     .model({
@@ -36,12 +36,27 @@ const RootStore = types
         return { addTodo };
     });
 
+// First way to do things 
 const store = RootStore.create({
     users: {},
+    todos: {
+        "1": {
+            name: "Get coffee",
+            done: true
+        }
+    }
 });
 
-store.addTodo(1, "GIVE ME COFFEE");
-store.todos.get(1).toggle();
+// Second way to do things
+applySnapshot(store, {
+    users: {},
+    todos: {
+        "1": {
+            name: "Make coffee",
+            done: false
+        }
+    }
+})
 
 render(
     <div>
