@@ -38,6 +38,9 @@ const RootStore = types
     },
     get completedCount() {
       return values(self.todos).filter(todo => todo.done).length;
+    },
+    getTodosWhereDoneIs(done) {
+      return values(self.todos).filter(todo => todo.done === done);
     }
   }))
   .actions(self => {
