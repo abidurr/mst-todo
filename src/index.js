@@ -6,16 +6,17 @@ import { types, getSnapshot } from "mobx-state-tree";
 const Todo = types
     .model({
         name: types.optional(types.string, ""),
-        done: types.optional(types.boolean, false)
+        done: types.optional(types.boolean, false),
     })
-    .actions(self => {
+
+    .actions((self) => {
         function setName(newName) {
             self.name = newName;
         }
         function toggle() {
             self.done = !self.done;
         }
-        return { setName, toggle }
+        return { setName, toggle };
     });
 
 const User = types.model({
@@ -25,22 +26,22 @@ const User = types.model({
 const RootStore = types
     .model({
         users: types.map(User),
-        todos: types.optional(types.map(Todo), {})
+        todos: types.optional(types.map(Todo), {}),
     })
-    .actions(self => {
+
+    .actions((self) => {
         function addTodo(id, name) {
-            self.todos.set(id, Todo.create({ name }))
+            self.todos.set(id, Todo.create({ name }));
         }
-        return { addTodo }
+        return { addTodo };
     });
 
 const store = RootStore.create({
-  users: {}
-})
+    users: {},
+});
 
-store.addTodo(1, "GIVE ME COFFEE")
-store.todos.get(1).toggle()
-
+store.addTodo(1, "GIVE ME COFFEE");
+store.todos.get(1).toggle();
 
 render(
     <div>
