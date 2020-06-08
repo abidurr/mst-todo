@@ -9,21 +9,30 @@ const randomId = () => Math.floor(Math.random() * 1000).toString(36);
 const Todo = types
   .model({
     name: types.optional(types.string, ""),
-    done: types.optional(types.boolean, false)
+    done: types.optional(types.boolean, false),
+    user: types.maybe(types.reference(types.late(() => User)))
   })
   .actions(self => {
     function setName(newName) {
       self.name = newName;
     }
-
+    function setUser(user) {
+      if (user === "") {
+        // When selected value is empty, set as undefined
+        self.user = undefined;
+      } else {
+        self.user = user;
+      }
+    }
     function toggle() {
       self.done = !self.done;
     }
 
-    return { setName, toggle };
+    return { setName, setUser, toggle };
   });
 
 const User = types.model({
+  id: types.identifier,
   name: types.optional(types.string, "")
 });
 
@@ -52,7 +61,20 @@ const RootStore = types
   });
 
 const store = RootStore.create({
-  users: {},
+  users: {
+    "1": {
+      id: "1",
+      name: "mweststrate"
+    },
+    "2": {
+      id: "2",
+      name: "mattiamanzati"
+    },
+    "3": {
+      id: "3",
+      name: "johndoe"
+    }
+  },
   todos: {
     "1": {
       name: "Eat a cake",
@@ -60,6 +82,18 @@ const store = RootStore.create({
     }
   }
 });
+
+const UserPickerView = observer(props => (
+  <select
+    value={props.user ? props.user.id : ""}
+    onChange={e => props.onChange(e.target.value)}
+  >
+    <option value="">-none-</option>
+    {values(props.store.users).map(user => (
+      <option value={user.id}>{user.name}</option>
+    ))}
+  </select>
+));
 
 const TodoView = observer(props => (
   <div>
@@ -72,6 +106,11 @@ const TodoView = observer(props => (
       type="text"
       value={props.todo.name}
       onChange={e => props.todo.setName(e.target.value)}
+    />
+    <UserPickerView
+      user={props.todo.user}
+      store={props.store}
+      onChange={userId => props.todo.setUser(userId)}
     />
   </div>
 ));
@@ -88,7 +127,7 @@ const AppView = observer(props => (
       Add Task
     </button>
     {values(props.store.todos).map(todo => (
-      <TodoView todo={todo} />
+      <TodoView store={props.store} todo={todo} />
     ))}
     <TodoCounterView store={props.store} />
   </div>
