@@ -1,21 +1,27 @@
-import "./index.css";
 import React from "react";
 import { render } from "react-dom";
-import { types, getSnapshot, applySnapshot } from "mobx-state-tree";
+import { types } from "mobx-state-tree";
+import { observer } from "mobx-react";
+import { values } from "mobx";
+
+let id = 1;
+const randomId = () => ++id;
 
 const Todo = types
     .model({
+        id: types.identifierNumber,
         name: types.optional(types.string, ""),
         done: types.optional(types.boolean, false),
     })
-
     .actions((self) => {
         function setName(newName) {
             self.name = newName;
         }
+
         function toggle() {
             self.done = !self.done;
         }
+
         return { setName, toggle };
     });
 
@@ -28,40 +34,45 @@ const RootStore = types
         users: types.map(User),
         todos: types.optional(types.map(Todo), {}),
     })
-
     .actions((self) => {
         function addTodo(id, name) {
-            self.todos.set(id, Todo.create({ name }));
+            self.todos.set(id, Todo.create({ id, name }));
         }
+
         return { addTodo };
     });
 
-// First way to do things 
 const store = RootStore.create({
     users: {},
     todos: {
         "1": {
-            name: "Get coffee",
-            done: true
-        }
-    }
+            id: id,
+            name: "Eat a cake",
+            done: true,
+        },
+    },
 });
 
-// Second way to do things
-applySnapshot(store, {
-    users: {},
-    todos: {
-        "1": {
-            name: "Make coffee",
-            done: false
-        }
-    }
-})
-
-render(
+const App = observer((props) => (
     <div>
-        Store: {JSON.stringify(getSnapshot(store))}
-        <br />
-    </div>,
-    document.getElementById("root")
-);
+        <button onClick={(e) => props.store.addTodo(randomId(), "New Task")}>
+            Add Task
+        </button>
+        {values(props.store.todos).map((todo) => (
+            <div key={todo.id}>
+                <input
+                    type="checkbox"
+                    checked={todo.done}
+                    onChange={(e) => todo.toggle()}
+                />
+                <input
+                    type="text"
+                    value={todo.name}
+                    onChange={(e) => todo.setName(e.target.value)}
+                />
+            </div>
+        ))}
+    </div>
+));
+
+render(<App store={store} />, document.getElementById("root"));
