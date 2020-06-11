@@ -6,6 +6,51 @@ import { values } from "mobx";
 import "./index.css";
 import styled from "styled-components";
 
+// Styled components
+
+const Button = styled.button`
+    color: lightgray;
+    background: transparent;
+    margin: 1em;
+    padding: 0.25em 1em;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+`;
+
+const Container = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    min-height: 90vh;
+    padding: 0;
+    margin: 0;
+`;
+
+const Input = styled.input`
+    color: lightgray;
+    background: transparent;
+    margin: 1em;
+    padding: 0.25em 1em;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+`;
+
+const Select = styled.select`
+    color: lightgray;
+    background: transparent;
+    margin: 1em;
+    padding: 0.25em 1em;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+`;
+
+const Option = styled.option`
+    color: black;
+`;
+
+// MST
+
 const randomId = () => Math.floor(Math.random() * 1000).toString(36);
 
 const Todo = types
@@ -85,19 +130,6 @@ const store = RootStore.create({
     },
 });
 
-const Select = styled.select`
-    color: lightgray;
-    background: transparent;
-    margin: 1em;
-    padding: 0.25em 1em;
-    border: 2px solid lightgray;
-    border-radius: 5px;
-`;
-
-const Option = styled.option`
-    color: black;
-`;
-
 const UserPickerView = observer((props) => (
     <Select
         value={props.user ? props.user.id : ""}
@@ -109,15 +141,6 @@ const UserPickerView = observer((props) => (
         ))}
     </Select>
 ));
-
-const Input = styled.input`
-    color: lightgray;
-    background: transparent;
-    margin: 1em;
-    padding: 0.25em 1em;
-    border: 2px solid lightgray;
-    border-radius: 5px;
-`;
 
 const TodoView = observer((props) => (
     <div>
@@ -145,23 +168,6 @@ const TodoCounterView = observer((props) => (
         completed
     </div>
 ));
-
-const Button = styled.button`
-    color: lightgray;
-    background: transparent;
-    margin: 1em;
-    padding: 0.25em 1em;
-    border: 2px solid lightgray;
-    border-radius: 5px;
-`;
-
-const Container = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    min-height: 90vh;
-`;
 
 const AppView = observer((props) => (
     <Container>
