@@ -59,7 +59,7 @@ const Todo = types
         done: types.optional(types.boolean, false),
         user: types.maybe(types.reference(types.late(() => User))),
     })
-    .actions((self) => {
+    .actions(self => {
         function setName(newName) {
             self.name = newName;
         }
@@ -88,7 +88,7 @@ const RootStore = types
         users: types.map(User),
         todos: types.map(Todo),
     })
-    .views((self) => ({
+    .views(self => ({
         get pendingCount() {
             return values(self.todos).filter((todo) => !todo.done).length;
         },
@@ -99,7 +99,7 @@ const RootStore = types
             return values(self.todos).filter((todo) => todo.done === done);
         },
     }))
-    .actions((self) => {
+    .actions(self => {
         function addTodo(id, name) {
             self.todos.set(id, Todo.create({ name }));
         }
@@ -130,7 +130,7 @@ const store = RootStore.create({
     },
 });
 
-const UserPickerView = observer((props) => (
+const UserPickerView = observer(props => (
     <Select
         value={props.user ? props.user.id : ""}
         onChange={(e) => props.onChange(e.target.value)}
@@ -142,7 +142,7 @@ const UserPickerView = observer((props) => (
     </Select>
 ));
 
-const TodoView = observer((props) => (
+const TodoView = observer(props => (
     <div>
         <Input
             type="checkbox"
@@ -162,14 +162,14 @@ const TodoView = observer((props) => (
     </div>
 ));
 
-const TodoCounterView = observer((props) => (
+const TodoCounterView = observer(props => (
     <div>
         {props.store.pendingCount} pending, {props.store.completedCount}{" "}
         completed
     </div>
 ));
 
-const AppView = observer((props) => (
+const AppView = observer(props => (
     <Container>
         <Button onClick={(e) => props.store.addTodo(randomId(), "New Task")}>
             Add Task
